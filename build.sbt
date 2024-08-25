@@ -1,24 +1,17 @@
-// See README.md for license details.
+scalaVersion := "2.12.13"
 
-ThisBuild / scalaVersion     := "2.13.12"
-ThisBuild / version          := "0.1.0"
-ThisBuild / organization     := "com.github.brugerx"
+scalacOptions ++= Seq(
+  "-deprecation",
+  "-feature",
+  "-unchecked",
+  // "-Xfatal-warnings",
+  "-language:reflectiveCalls"
+)
 
-val chiselVersion = "6.2.0"
+val chiselVersion = "3.5.6"
+addCompilerPlugin("edu.berkeley.cs" %% "chisel3-plugin" % chiselVersion cross CrossVersion.full)
+libraryDependencies += "edu.berkeley.cs" %% "chisel3" % chiselVersion
+libraryDependencies += "edu.berkeley.cs" %% "chiseltest" % "0.5.6"
+libraryDependencies += "edu.berkeley.cs" % "ip-contributions" % "0.5.1"
 
-lazy val root = (project in file("."))
-  .settings(
-    name := "FPGA_Course_SKYLAB",
-    libraryDependencies ++= Seq(
-      "org.chipsalliance" %% "chisel" % chiselVersion,
-      "org.scalatest" %% "scalatest" % "3.2.16" % "test",
-    ),
-    scalacOptions ++= Seq(
-      "-language:reflectiveCalls",
-      "-deprecation",
-      "-feature",
-      "-Xcheckinit",
-      "-Ymacro-annotations",
-    ),
-    addCompilerPlugin("org.chipsalliance" % "chisel-plugin" % chiselVersion cross CrossVersion.full),
-  )
+libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "3.0.0"
