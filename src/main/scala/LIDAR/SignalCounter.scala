@@ -8,7 +8,7 @@ class SignalCounter(start_value: Int = 0, width: Int) extends Module {
   val io = IO(new Bundle {
     val signal = Input(Bool())
     val reset = Input(Bool())
-    val out = Output(UInt(width.W))
+    val count = Output(UInt(width.W))
   })
 
   val counter_reg = RegInit(start_value.U(width.W))
@@ -19,5 +19,5 @@ class SignalCounter(start_value: Int = 0, width: Int) extends Module {
     counter_reg := Mux(io.reset, 0.U ,counter_reg + 1.U)
   }
 
-  io.out := counter_reg
+  io.count := counter_reg
 }

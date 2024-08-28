@@ -2,6 +2,8 @@ package LIDAR
 
 import chisel3._
 
+
+
 // ALU-like object for turning clock cycles into distances
 class DistanceCalculator() extends Module {
   val io = IO(new Bundle {
@@ -18,3 +20,4 @@ class DistanceCalculator() extends Module {
 
   io.distance_cm := (v_air*io.clock_cycles)/2.U
 }
+
