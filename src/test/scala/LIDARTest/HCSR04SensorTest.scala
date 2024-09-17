@@ -29,4 +29,17 @@ class HCSR04SensorTest extends AnyFlatSpec with ChiselScalatestTester {
       print("Measurement: " + dut.io.sensor_measurement.peekInt() + "\n")
     }
   }
+  "FullTest" should "pass" in {
+    test(new HCSR04Sensor()).withAnnotations(Seq(WriteVcdAnnotation))
+    { dut =>
+      dut.clock.setTimeout(0)
+      dut.io.physical_echo_test.poke(false.B)
+      dut.io.start_reading.poke(true.B)
+      dut.clock.step(12)
+      dut.io.physical_echo_test.poke(true.B)
+      dut.clock.step(500000)
+      dut.io.physical_echo_test.poke(false.B)
+      dut.clock.step(2)
+    }
+  }
 }

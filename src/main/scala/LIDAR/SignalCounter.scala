@@ -13,11 +13,8 @@ class SignalCounter(start_value: Int = 0, width: Int) extends Module {
 
   val counter_reg = RegInit(start_value.U(width.W))
 
-  when(io.signal)
-  {
-    //Whenever we get the signal; Update the counter_reg
-    counter_reg := Mux(io.reset, 0.U ,counter_reg + 1.U)
-  }
+  //Whenever we get the signal; Update the counter_reg
+  counter_reg := Mux(io.reset, 0.U ,counter_reg + io.signal)
 
   io.count := counter_reg
 }

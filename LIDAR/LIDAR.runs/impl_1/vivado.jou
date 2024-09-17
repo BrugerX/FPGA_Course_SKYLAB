@@ -1,0 +1,24 @@
+#-----------------------------------------------------------
+# Vivado v2024.1 (64-bit)
+# SW Build 5076996 on Wed May 22 18:37:14 MDT 2024
+# IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
+# SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
+# Start of session at: Tue Sep 17 14:06:48 2024
+# Process ID: 20224
+# Current directory: C:/Users/alber/OneDrive/Dokumenter/GitHub/FPGA_Course_SKYLAB/LIDAR/LIDAR.runs/impl_1
+# Command line: vivado.exe -log LidarTopMain.vdi -applog -product Vivado -messageDb vivado.pb -mode batch -source LidarTopMain.tcl -notrace
+# Log file: C:/Users/alber/OneDrive/Dokumenter/GitHub/FPGA_Course_SKYLAB/LIDAR/LIDAR.runs/impl_1/LidarTopMain.vdi
+# Journal file: C:/Users/alber/OneDrive/Dokumenter/GitHub/FPGA_Course_SKYLAB/LIDAR/LIDAR.runs/impl_1\vivado.jou
+# Running On        :LAPTOP-0MJ33QGT
+# Platform          :Windows Server 2016 or Windows 10
+# Operating System  :19045
+# Processor Detail  :AMD Ryzen 5 4500U with Radeon Graphics         
+# CPU Frequency     :2371 MHz
+# CPU Physical cores:6
+# CPU Logical cores :6
+# Host memory       :16500 MB
+# Swap memory       :18468 MB
+# Total Virtual     :34969 MB
+# Available Virtual :6723 MB
+#-----------------------------------------------------------
+source LidarTopMain.tcl -notrace

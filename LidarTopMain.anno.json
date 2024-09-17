@@ -1,0 +1,35 @@
+[
+  {
+    "class":"firrtl.transforms.DedupedResult",
+    "original":"~LidarTopMain|Bin2BDC",
+    "duplicate":"~LidarTopMain|LidarTopMain/display:Display/PriceBin2BDC:Bin2BDC",
+    "index":0.5
+  },
+  {
+    "class":"firrtl.transforms.DedupedResult",
+    "original":"~LidarTopMain|Bin2BDC_1",
+    "duplicate":"~LidarTopMain|LidarTopMain/display:Display/SumBin2BDC:Bin2BDC",
+    "index":0.625
+  },
+  {
+    "class":"firrtl.EmitCircuitAnnotation",
+    "emitter":"firrtl.VerilogEmitter"
+  },
+  {
+    "class":"chisel3.experimental.EnumAnnotations$EnumDefAnnotation",
+    "typeName":"LIDAR.Trigger$State",
+    "definition":{
+      "idle":0,
+      "send":1
+    }
+  },
+  {
+    "class":"chisel3.experimental.EnumAnnotations$EnumComponentAnnotation",
+    "target":"LidarTopMain.Trigger.stateReg",
+    "enumTypeName":"LIDAR.Trigger$State"
+  },
+  {
+    "class":"firrtl.transforms.BlackBoxTargetDirAnno",
+    "targetDir":"."
+  }
+]
