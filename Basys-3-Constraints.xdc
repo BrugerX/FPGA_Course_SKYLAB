@@ -18,9 +18,18 @@ set_property PACKAGE_PIN W18 [get_ports {io_sensor_measurement[4]}]
 set_property PACKAGE_PIN U15 [get_ports {io_sensor_measurement[5]}]
 set_property PACKAGE_PIN U14 [get_ports {io_sensor_measurement[6]}]
 set_property PACKAGE_PIN V14 [get_ports {io_sensor_measurement[7]}]
+set_property PACKAGE_PIN V13 [get_ports {io_sensor_measurement2[0]}]
+set_property PACKAGE_PIN V3  [get_ports {io_sensor_measurement2[1]}]
+set_property PACKAGE_PIN W3  [get_ports {io_sensor_measurement2[2]}]
+set_property PACKAGE_PIN U3  [get_ports {io_sensor_measurement2[3]}]
+set_property PACKAGE_PIN P3  [get_ports {io_sensor_measurement2[4]}]
+set_property PACKAGE_PIN N3  [get_ports {io_sensor_measurement2[5]}]
+set_property PACKAGE_PIN P1  [get_ports {io_sensor_measurement2[6]}]
+set_property PACKAGE_PIN L1  [get_ports {io_sensor_measurement2[7]}]
 
 set_property PACKAGE_PIN C15 [get_ports {io_sensor_trigger_pin}]
 set_property PACKAGE_PIN C16 [get_ports {io_physical_echo_test}]
+set_property PACKAGE_PIN A17 [get_ports {io_physical_echo_test2}]
 
 set_property PACKAGE_PIN U17 [get_ports reset]
 

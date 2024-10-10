@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (win64) Build 5076996 Wed May 22 18:37:14 MDT 2024
-| Date         : Tue Sep 17 14:07:26 2024
+| Date         : Thu Oct 10 01:05:28 2024
 | Host         : LAPTOP-0MJ33QGT running 64-bit major release  (build 9200)
 | Command      : report_control_sets -verbose -file LidarTopMain_control_sets_placed.rpt
 | Design       : LidarTopMain
@@ -27,7 +27,7 @@ Table of Contents
 |    Minimum number of control sets                        |     6 |
 |    Addition due to synthesis replication                 |     0 |
 |    Addition due to physical synthesis replication        |     0 |
-| Unused register locations in slices containing registers |    29 |
+| Unused register locations in slices containing registers |    27 |
 +----------------------------------------------------------+-------+
 * Control sets can be merged at opt_design using control_set_merge or merge_equivalent_drivers
 ** Run report_qor_suggestions for automated merging and remapping suggestions
@@ -60,7 +60,7 @@ Table of Contents
 +--------------+-----------------------+------------------------+-----------------+--------------+
 | No           | No                    | No                     |               2 |            1 |
 | No           | No                    | Yes                    |               0 |            0 |
-| No           | Yes                   | No                     |              77 |           21 |
+| No           | Yes                   | No                     |             103 |           28 |
 | Yes          | No                    | No                     |               0 |            0 |
 | Yes          | No                    | Yes                    |               0 |            0 |
 | Yes          | Yes                   | No                     |               4 |            2 |
@@ -77,8 +77,8 @@ Table of Contents
 |  clock_IBUF_BUFG | display/digiSelect | reset_IBUF                                 |                2 |              4 |         2.00 |
 |  clock_IBUF_BUFG |                    | sensor/sensor_trigger/count_reg[9]_i_1_n_0 |                3 |             10 |         3.33 |
 |  clock_IBUF_BUFG |                    | display/clockReg[0]_i_1_n_0                |                4 |             14 |         3.50 |
-|  clock_IBUF_BUFG |                    | sensor/sensor_trigger/clear                |                7 |             26 |         3.71 |
 |  clock_IBUF_BUFG |                    | regCount[0]_i_1_n_0                        |                7 |             27 |         3.86 |
+|  clock_IBUF_BUFG |                    | sensor/sensor_trigger/risingEdge_REG_reg_0 |               14 |             52 |         3.71 |
 +------------------+--------------------+--------------------------------------------+------------------+----------------+--------------+
 
 

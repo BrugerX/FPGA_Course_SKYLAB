@@ -5,7 +5,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 
 
 
-class TriggerTest extends AnyFlatSpec with ChiselScalatestTester {
+class triggerTest extends AnyFlatSpec with ChiselScalatestTester {
   "triggerTest" should "pass" in {
     test(new Trigger()).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       dut.io.start_trigger.poke(true.B)

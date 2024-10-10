@@ -96,6 +96,103 @@ circuit LidarTopMain :
     dist_calculator.io.clock_cycles <= signal_counter.io.count @[HCSR04Sensor.scala 72:35]
     io.sensor_measurement <= dist_calculator.io.distance_cm @[HCSR04Sensor.scala 73:25]
 
+  module Trigger_1 :
+    input clock : Clock
+    input reset : Reset
+    output io : { flip start_trigger : UInt<1>, trigger_out : UInt<1>}
+
+    reg count_reg : UInt<10>, clock with :
+      reset => (reset, UInt<10>("h0")) @[Trigger.scala 12:26]
+    reg risingEdge_REG : UInt<1>, clock with :
+      reset => (UInt<1>("h0"), risingEdge_REG) @[Trigger.scala 14:47]
+    risingEdge_REG <= io.start_trigger @[Trigger.scala 14:47]
+    node _risingEdge_T = eq(risingEdge_REG, UInt<1>("h0")) @[Trigger.scala 14:39]
+    node risingEdge = and(io.start_trigger, _risingEdge_T) @[Trigger.scala 14:37]
+    reg stateReg : UInt<1>, clock with :
+      reset => (reset, UInt<1>("h0")) @[Trigger.scala 20:25]
+    io.trigger_out <= UInt<1>("h0") @[Trigger.scala 21:18]
+    node _T = asUInt(UInt<1>("h0")) @[Trigger.scala 23:20]
+    node _T_1 = asUInt(stateReg) @[Trigger.scala 23:20]
+    node _T_2 = eq(_T, _T_1) @[Trigger.scala 23:20]
+    when _T_2 : @[Trigger.scala 23:20]
+      count_reg <= UInt<1>("h0") @[Trigger.scala 25:17]
+      node _T_3 = eq(risingEdge, UInt<1>("h1")) @[Trigger.scala 26:23]
+      when _T_3 : @[Trigger.scala 26:35]
+        stateReg <= UInt<1>("h1") @[Trigger.scala 27:18]
+    else :
+      node _T_4 = asUInt(UInt<1>("h1")) @[Trigger.scala 23:20]
+      node _T_5 = asUInt(stateReg) @[Trigger.scala 23:20]
+      node _T_6 = eq(_T_4, _T_5) @[Trigger.scala 23:20]
+      when _T_6 : @[Trigger.scala 23:20]
+        node _count_reg_T = add(count_reg, UInt<1>("h1")) @[Trigger.scala 32:30]
+        node _count_reg_T_1 = tail(_count_reg_T, 1) @[Trigger.scala 32:30]
+        count_reg <= _count_reg_T_1 @[Trigger.scala 32:17]
+        io.trigger_out <= UInt<1>("h1") @[Trigger.scala 33:22]
+        node _T_7 = eq(count_reg, UInt<10>("h3e8")) @[Trigger.scala 34:23]
+        when _T_7 : @[Trigger.scala 34:35]
+          stateReg <= UInt<1>("h0") @[Trigger.scala 35:18]
+
+
+  module DistanceCalculator_1 :
+    input clock : Clock
+    input reset : Reset
+    output io : { flip clock_cycles : UInt<32>, distance_cm : UInt<8>}
+
+    node _io_distance_cm_T = mul(UInt<32>("h168"), io.clock_cycles) @[DistanceCalculator.scala 22:28]
+    node _io_distance_cm_T_1 = div(_io_distance_cm_T, UInt<2>("h2")) @[DistanceCalculator.scala 22:45]
+    node _io_distance_cm_T_2 = shr(_io_distance_cm_T_1, 20) @[DistanceCalculator.scala 22:51]
+    io.distance_cm <= _io_distance_cm_T_2 @[DistanceCalculator.scala 22:18]
+
+  module SignalCounter_1 :
+    input clock : Clock
+    input reset : Reset
+    output io : { flip signal : UInt<1>, flip reset : UInt<1>, count : UInt<32>}
+
+    reg counter_reg : UInt<32>, clock with :
+      reset => (reset, UInt<32>("h0")) @[SignalCounter.scala 14:28]
+    node _counter_reg_T = add(counter_reg, io.signal) @[SignalCounter.scala 17:49]
+    node _counter_reg_T_1 = tail(_counter_reg_T, 1) @[SignalCounter.scala 17:49]
+    node _counter_reg_T_2 = mux(io.reset, UInt<1>("h0"), _counter_reg_T_1) @[SignalCounter.scala 17:21]
+    counter_reg <= _counter_reg_T_2 @[SignalCounter.scala 17:15]
+    io.count <= counter_reg @[SignalCounter.scala 19:12]
+
+  module HCSR04Sensor_1 :
+    input clock : Clock
+    input reset : Reset
+    output io : { flip start_reading : UInt<1>, sensor_measurement : UInt<8>, sensor_trigger_pin : UInt<1>, flip physical_echo_test : UInt<1>}
+
+    inst sensor_trigger of Trigger_1 @[HCSR04Sensor.scala 36:30]
+    sensor_trigger.clock <= clock
+    sensor_trigger.reset <= reset
+    inst dist_calculator of DistanceCalculator_1 @[HCSR04Sensor.scala 41:31]
+    dist_calculator.clock <= clock
+    dist_calculator.reset <= reset
+    inst signal_counter of SignalCounter_1 @[HCSR04Sensor.scala 42:30]
+    signal_counter.clock <= clock
+    signal_counter.reset <= reset
+    reg reg_echo : UInt<1>, clock with :
+      reset => (UInt<1>("h0"), reg_echo) @[HCSR04Sensor.scala 45:21]
+    reg reg_signal : UInt<1>, clock with :
+      reset => (UInt<1>("h0"), reg_signal) @[HCSR04Sensor.scala 46:23]
+    reg reg_output : UInt<32>, clock with :
+      reset => (UInt<1>("h0"), reg_output) @[HCSR04Sensor.scala 47:23]
+    sensor_trigger.io.start_trigger <= io.start_reading @[HCSR04Sensor.scala 52:35]
+    io.sensor_trigger_pin <= sensor_trigger.io.trigger_out @[HCSR04Sensor.scala 53:25]
+    reg_signal <= io.start_reading @[HCSR04Sensor.scala 56:14]
+    io.sensor_measurement <= reg_output @[HCSR04Sensor.scala 57:25]
+    reg risingEdge_REG : UInt<1>, clock with :
+      reset => (UInt<1>("h0"), risingEdge_REG) @[HCSR04Sensor.scala 59:48]
+    risingEdge_REG <= io.start_reading @[HCSR04Sensor.scala 59:48]
+    node _risingEdge_T = eq(risingEdge_REG, UInt<1>("h0")) @[HCSR04Sensor.scala 59:40]
+    node risingEdge = and(io.start_reading, _risingEdge_T) @[HCSR04Sensor.scala 59:37]
+    signal_counter.io.reset <= UInt<1>("h0") @[HCSR04Sensor.scala 61:27]
+    when risingEdge : @[HCSR04Sensor.scala 63:20]
+      signal_counter.io.reset <= UInt<1>("h1") @[HCSR04Sensor.scala 64:31]
+    signal_counter.io.signal <= io.physical_echo_test @[HCSR04Sensor.scala 68:28]
+    io.sensor_measurement <= signal_counter.io.count @[HCSR04Sensor.scala 69:25]
+    dist_calculator.io.clock_cycles <= signal_counter.io.count @[HCSR04Sensor.scala 72:35]
+    io.sensor_measurement <= dist_calculator.io.distance_cm @[HCSR04Sensor.scala 73:25]
+
   module Bin2BDC :
     input clock : Clock
     input reset : Reset
@@ -593,31 +690,38 @@ circuit LidarTopMain :
   module LidarTopMain :
     input clock : Clock
     input reset : UInt<1>
-    output io : { seg : UInt<7>, an : UInt<4>, sensor_measurement : UInt<8>, sensor_trigger_pin : UInt<1>, flip physical_echo_test : UInt<1>}
+    output io : { seg : UInt<7>, an : UInt<4>, sensor_measurement : UInt<8>, sensor_measurement2 : UInt<8>, sensor_trigger_pin : UInt<1>, flip physical_echo_test : UInt<1>, flip physical_echo_test2 : UInt<1>}
 
-    inst sensor of HCSR04Sensor @[LidarTopMain.scala 20:22]
+    inst sensor of HCSR04Sensor @[LidarTopMain.scala 22:22]
     sensor.clock <= clock
     sensor.reset <= reset
+    inst sensor2 of HCSR04Sensor_1 @[LidarTopMain.scala 23:23]
+    sensor2.clock <= clock
+    sensor2.reset <= reset
     reg regCount : UInt<32>, clock with :
-      reset => (reset, UInt<32>("h0")) @[LidarTopMain.scala 22:25]
-    sensor.io.physical_echo_test <= io.physical_echo_test @[LidarTopMain.scala 24:32]
-    node _io_sensor_trigger_pin_T = not(sensor.io.sensor_trigger_pin) @[LidarTopMain.scala 25:28]
-    io.sensor_trigger_pin <= _io_sensor_trigger_pin_T @[LidarTopMain.scala 25:25]
-    io.sensor_measurement <= sensor.io.sensor_measurement @[LidarTopMain.scala 26:25]
-    inst display of Display @[LidarTopMain.scala 29:23]
+      reset => (reset, UInt<32>("h0")) @[LidarTopMain.scala 25:25]
+    sensor.io.physical_echo_test <= io.physical_echo_test @[LidarTopMain.scala 27:32]
+    node _io_sensor_trigger_pin_T = not(sensor.io.sensor_trigger_pin) @[LidarTopMain.scala 28:28]
+    io.sensor_trigger_pin <= _io_sensor_trigger_pin_T @[LidarTopMain.scala 28:25]
+    io.sensor_measurement <= sensor.io.sensor_measurement @[LidarTopMain.scala 29:25]
+    io.sensor_measurement2 <= sensor2.io.sensor_measurement @[LidarTopMain.scala 31:26]
+    sensor2.io.physical_echo_test <= io.physical_echo_test2 @[LidarTopMain.scala 33:33]
+    inst display of Display @[LidarTopMain.scala 36:23]
     display.clock <= clock
     display.reset <= reset
-    io.seg <= display.io.seg @[LidarTopMain.scala 30:10]
-    io.an <= display.io.an @[LidarTopMain.scala 31:9]
-    display.io.sum <= UInt<1>("h0") @[LidarTopMain.scala 33:18]
-    display.io.price <= sensor.io.sensor_measurement @[LidarTopMain.scala 34:20]
-    sensor.io.start_reading <= UInt<1>("h0") @[LidarTopMain.scala 37:27]
-    node _regCount_T = add(regCount, UInt<1>("h1")) @[LidarTopMain.scala 38:24]
-    node _regCount_T_1 = tail(_regCount_T, 1) @[LidarTopMain.scala 38:24]
-    regCount <= _regCount_T_1 @[LidarTopMain.scala 38:12]
-    node _T = eq(regCount, UInt<27>("h5f5e100")) @[LidarTopMain.scala 39:17]
-    when _T : @[LidarTopMain.scala 39:34]
-      sensor.io.start_reading <= UInt<1>("h1") @[LidarTopMain.scala 40:29]
-      regCount <= UInt<1>("h0") @[LidarTopMain.scala 41:14]
+    io.seg <= display.io.seg @[LidarTopMain.scala 37:10]
+    io.an <= display.io.an @[LidarTopMain.scala 38:9]
+    display.io.sum <= sensor2.io.sensor_measurement @[LidarTopMain.scala 40:18]
+    display.io.price <= sensor.io.sensor_measurement @[LidarTopMain.scala 41:20]
+    sensor.io.start_reading <= UInt<1>("h0") @[LidarTopMain.scala 44:27]
+    sensor2.io.start_reading <= UInt<1>("h0") @[LidarTopMain.scala 45:28]
+    node _regCount_T = add(regCount, UInt<1>("h1")) @[LidarTopMain.scala 46:24]
+    node _regCount_T_1 = tail(_regCount_T, 1) @[LidarTopMain.scala 46:24]
+    regCount <= _regCount_T_1 @[LidarTopMain.scala 46:12]
+    node _T = eq(regCount, UInt<27>("h5f5e100")) @[LidarTopMain.scala 47:17]
+    when _T : @[LidarTopMain.scala 47:34]
+      sensor2.io.start_reading <= UInt<1>("h1") @[LidarTopMain.scala 48:30]
+      sensor.io.start_reading <= UInt<1>("h1") @[LidarTopMain.scala 49:29]
+      regCount <= UInt<1>("h0") @[LidarTopMain.scala 50:14]
 
 

@@ -479,6 +479,7 @@ endmodule
 module Display(
   input        clock,
   input        reset,
+  input  [7:0] io_sum,
   input  [7:0] io_price,
   output [6:0] io_seg,
   output [3:0] io_an
@@ -522,7 +523,7 @@ module Display(
   assign io_seg = ~sevenSegDec_io_out; // @[Display.scala 39:13]
   assign io_an = ~digiSelect; // @[Display.scala 40:12]
   assign PriceBin2BDC_io_N = io_price[6:0]; // @[Display.scala 27:21]
-  assign SumBin2BDC_io_N = 7'h0; // @[Display.scala 29:19]
+  assign SumBin2BDC_io_N = io_sum[6:0]; // @[Display.scala 29:19]
   assign sevenSegDec_io_in = _sevenSegDec_io_in_T_9 | _sevenSegDec_io_in_T_7; // @[Mux.scala 27:73]
   always @(posedge clock) begin
     if (reset) begin // @[Display.scala 15:27]
@@ -592,26 +593,35 @@ module LidarTopMain(
   output [6:0] io_seg,
   output [3:0] io_an,
   output [7:0] io_sensor_measurement,
+  output [7:0] io_sensor_measurement2,
   output       io_sensor_trigger_pin,
-  input        io_physical_echo_test
+  input        io_physical_echo_test,
+  input        io_physical_echo_test2
 );
 `ifdef RANDOMIZE_REG_INIT
   reg [31:0] _RAND_0;
 `endif // RANDOMIZE_REG_INIT
-  wire  sensor_clock; // @[LidarTopMain.scala 20:22]
-  wire  sensor_reset; // @[LidarTopMain.scala 20:22]
-  wire  sensor_io_start_reading; // @[LidarTopMain.scala 20:22]
-  wire [7:0] sensor_io_sensor_measurement; // @[LidarTopMain.scala 20:22]
-  wire  sensor_io_sensor_trigger_pin; // @[LidarTopMain.scala 20:22]
-  wire  sensor_io_physical_echo_test; // @[LidarTopMain.scala 20:22]
-  wire  display_clock; // @[LidarTopMain.scala 29:23]
-  wire  display_reset; // @[LidarTopMain.scala 29:23]
-  wire [7:0] display_io_price; // @[LidarTopMain.scala 29:23]
-  wire [6:0] display_io_seg; // @[LidarTopMain.scala 29:23]
-  wire [3:0] display_io_an; // @[LidarTopMain.scala 29:23]
-  reg [31:0] regCount; // @[LidarTopMain.scala 22:25]
-  wire [31:0] _regCount_T_1 = regCount + 32'h1; // @[LidarTopMain.scala 38:24]
-  HCSR04Sensor sensor ( // @[LidarTopMain.scala 20:22]
+  wire  sensor_clock; // @[LidarTopMain.scala 22:22]
+  wire  sensor_reset; // @[LidarTopMain.scala 22:22]
+  wire  sensor_io_start_reading; // @[LidarTopMain.scala 22:22]
+  wire [7:0] sensor_io_sensor_measurement; // @[LidarTopMain.scala 22:22]
+  wire  sensor_io_sensor_trigger_pin; // @[LidarTopMain.scala 22:22]
+  wire  sensor_io_physical_echo_test; // @[LidarTopMain.scala 22:22]
+  wire  sensor2_clock; // @[LidarTopMain.scala 23:23]
+  wire  sensor2_reset; // @[LidarTopMain.scala 23:23]
+  wire  sensor2_io_start_reading; // @[LidarTopMain.scala 23:23]
+  wire [7:0] sensor2_io_sensor_measurement; // @[LidarTopMain.scala 23:23]
+  wire  sensor2_io_sensor_trigger_pin; // @[LidarTopMain.scala 23:23]
+  wire  sensor2_io_physical_echo_test; // @[LidarTopMain.scala 23:23]
+  wire  display_clock; // @[LidarTopMain.scala 36:23]
+  wire  display_reset; // @[LidarTopMain.scala 36:23]
+  wire [7:0] display_io_sum; // @[LidarTopMain.scala 36:23]
+  wire [7:0] display_io_price; // @[LidarTopMain.scala 36:23]
+  wire [6:0] display_io_seg; // @[LidarTopMain.scala 36:23]
+  wire [3:0] display_io_an; // @[LidarTopMain.scala 36:23]
+  reg [31:0] regCount; // @[LidarTopMain.scala 25:25]
+  wire [31:0] _regCount_T_1 = regCount + 32'h1; // @[LidarTopMain.scala 46:24]
+  HCSR04Sensor sensor ( // @[LidarTopMain.scala 22:22]
     .clock(sensor_clock),
     .reset(sensor_reset),
     .io_start_reading(sensor_io_start_reading),
@@ -619,31 +629,46 @@ module LidarTopMain(
     .io_sensor_trigger_pin(sensor_io_sensor_trigger_pin),
     .io_physical_echo_test(sensor_io_physical_echo_test)
   );
-  Display display ( // @[LidarTopMain.scala 29:23]
+  HCSR04Sensor sensor2 ( // @[LidarTopMain.scala 23:23]
+    .clock(sensor2_clock),
+    .reset(sensor2_reset),
+    .io_start_reading(sensor2_io_start_reading),
+    .io_sensor_measurement(sensor2_io_sensor_measurement),
+    .io_sensor_trigger_pin(sensor2_io_sensor_trigger_pin),
+    .io_physical_echo_test(sensor2_io_physical_echo_test)
+  );
+  Display display ( // @[LidarTopMain.scala 36:23]
     .clock(display_clock),
     .reset(display_reset),
+    .io_sum(display_io_sum),
     .io_price(display_io_price),
     .io_seg(display_io_seg),
     .io_an(display_io_an)
   );
-  assign io_seg = display_io_seg; // @[LidarTopMain.scala 30:10]
-  assign io_an = display_io_an; // @[LidarTopMain.scala 31:9]
-  assign io_sensor_measurement = sensor_io_sensor_measurement; // @[LidarTopMain.scala 26:25]
-  assign io_sensor_trigger_pin = ~sensor_io_sensor_trigger_pin; // @[LidarTopMain.scala 25:28]
+  assign io_seg = display_io_seg; // @[LidarTopMain.scala 37:10]
+  assign io_an = display_io_an; // @[LidarTopMain.scala 38:9]
+  assign io_sensor_measurement = sensor_io_sensor_measurement; // @[LidarTopMain.scala 29:25]
+  assign io_sensor_measurement2 = sensor2_io_sensor_measurement; // @[LidarTopMain.scala 31:26]
+  assign io_sensor_trigger_pin = ~sensor_io_sensor_trigger_pin; // @[LidarTopMain.scala 28:28]
   assign sensor_clock = clock;
   assign sensor_reset = reset;
-  assign sensor_io_start_reading = regCount == 32'h5f5e100; // @[LidarTopMain.scala 39:17]
-  assign sensor_io_physical_echo_test = io_physical_echo_test; // @[LidarTopMain.scala 24:32]
+  assign sensor_io_start_reading = regCount == 32'h5f5e100; // @[LidarTopMain.scala 47:17]
+  assign sensor_io_physical_echo_test = io_physical_echo_test; // @[LidarTopMain.scala 27:32]
+  assign sensor2_clock = clock;
+  assign sensor2_reset = reset;
+  assign sensor2_io_start_reading = regCount == 32'h5f5e100; // @[LidarTopMain.scala 47:17]
+  assign sensor2_io_physical_echo_test = io_physical_echo_test2; // @[LidarTopMain.scala 33:33]
   assign display_clock = clock;
   assign display_reset = reset;
-  assign display_io_price = sensor_io_sensor_measurement; // @[LidarTopMain.scala 34:20]
+  assign display_io_sum = sensor2_io_sensor_measurement; // @[LidarTopMain.scala 40:18]
+  assign display_io_price = sensor_io_sensor_measurement; // @[LidarTopMain.scala 41:20]
   always @(posedge clock) begin
-    if (reset) begin // @[LidarTopMain.scala 22:25]
-      regCount <= 32'h0; // @[LidarTopMain.scala 22:25]
-    end else if (regCount == 32'h5f5e100) begin // @[LidarTopMain.scala 39:34]
-      regCount <= 32'h0; // @[LidarTopMain.scala 41:14]
+    if (reset) begin // @[LidarTopMain.scala 25:25]
+      regCount <= 32'h0; // @[LidarTopMain.scala 25:25]
+    end else if (regCount == 32'h5f5e100) begin // @[LidarTopMain.scala 47:34]
+      regCount <= 32'h0; // @[LidarTopMain.scala 50:14]
     end else begin
-      regCount <= _regCount_T_1; // @[LidarTopMain.scala 38:12]
+      regCount <= _regCount_T_1; // @[LidarTopMain.scala 46:12]
     end
   end
 // Register and memory initialization
